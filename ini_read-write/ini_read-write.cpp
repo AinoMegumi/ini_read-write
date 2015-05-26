@@ -7,9 +7,10 @@
 std::string getLastErrorText();
 static inline void clearErr();
 IniStream::IniStream(std::wstring const& filepath_or_name) {
-	if (L':' != filepath_or_name.at(1)) {
+	if (L':' != filepath_or_name.at(1)) {//2文字目が':'ならフルパス
 		wchar_t dir[MAX_PATH];
-		if (!GetCurrentDirectory(MAX_PATH, dir)) throw "getcurrentdirctory err.";
+		if (!GetCurrentDirectory(MAX_PATH, dir)) throw std::runtime_error("IniStream::IniStream : getcurrentdirctory error.");
+		//".\\[filepath_or_name]だとファイルが無いときにcreate_UTF16_fileがCurrent Directoryに生成しない"
 		this->filefullpath = dir + (L"\\" + filepath_or_name);
 	}
 	else {
@@ -25,7 +26,7 @@ bool IniStream::is_now_created() const {
 }
 void IniStream::create_UTF16_file() {
 	if (this->was_no_exist || !PathFileExists(this->filefullpath.c_str())) {
-		constexpr wchar_t BOM = 0xFEFF;
+		constexpr wchar_t BOM = 0xFEFF;//wchar_tがUTF-16と決め打ち、gccではうまくいかない気がする
 		std::wofstream wfout;
 		wfout.open(this->filefullpath, std::ios_base::binary);
 		wfout << BOM;

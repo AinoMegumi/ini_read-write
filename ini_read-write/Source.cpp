@@ -12,12 +12,18 @@ int main(void){
 		return tmp;
 	}();
 	const std::wstring filename = L"Test.ini";
-	wchar_t dir[MAX_PATH];
-	if (!GetCurrentDirectory(MAX_PATH, dir)) std::wcerr << "getcurrentdirctory err." << std::endl;
 	try {
-		IniStream ini(dir + (L"\\" + filename));
-		ini.edit(L"Test", L"Test1", std::to_wstring(test_num));
-		ini.edit(L"Test", L"Test2", std::to_wstring(test_num + 1));
+		{
+			wchar_t dir[MAX_PATH];
+			if (!GetCurrentDirectory(MAX_PATH, dir)) std::wcerr << "getcurrentdirctory err." << std::endl;
+			IniStream ini(dir + (L"\\" + filename));//フルパスを渡す方法、2文字目は":"のはず
+			ini.edit(L"Test", L"Test1", std::to_wstring(test_num));
+			ini.edit(L"Test", L"Test2", std::to_wstring(test_num + 1));
+		}
+		{
+			IniStream ini2(filename);//ファイル名を渡す方法、Current Directryから捜索
+			ini2.edit(L"Test", L"Test3", std::to_wstring(test_num + 2));
+		}
 	}
 	catch (std::exception er) {
 		std::cerr << er.what() << std::endl;

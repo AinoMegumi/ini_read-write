@@ -11,15 +11,3 @@ private:
 	std::wstring filefullpath;
 	bool was_no_exist;
 };
-class IniStreamException : public std::exception
-{
-private:
-	std::string s;
-public:
-	IniStreamException(std::string ss) : s(ss) {}
-	~IniStreamException() throw () {} // Updated
-	const char* what() noexcept(true) {
-		const std::string tmp = "IniStream:" + s;
-		return tmp.c_str();
-	}
-};

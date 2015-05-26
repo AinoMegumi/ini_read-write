@@ -33,8 +33,8 @@ void IniStream::create_UTF16_file() {
 }
 void IniStream::edit(std::wstring const& section, std::wstring const& key, std::wstring const& str) {
 	clearErr();
-	if (false != WritePrivateProfileString(section.c_str(), key.c_str(), str.c_str(), this->filefullpath.c_str())) {
-		throw IniStreamException(getLastErrorText());
+	if (false == WritePrivateProfileString(section.c_str(), key.c_str(), str.c_str(), this->filefullpath.c_str())) {
+		throw std::runtime_error("IniStream::edit : " + getLastErrorText());
 	}
 }
 static inline void clearErr() {
@@ -53,9 +53,9 @@ std::string getLastErrorText(){
 		nullptr
 	);
 	auto i = len - 3;
-	for (; '\r' != buf[i] && '\n' != buf[i] && '\0' != buf[i]; i++);
+	for (; '\r' != buf[i] && '\n' != buf[i] && '\0' != buf[i]; i++);//改行文字削除
 	buf[i] = '\0';
-	std::string ret = buf + std::to_string(lasterr);
+	std::string ret = buf + ("(" + std::to_string(lasterr)) + ")";//エラーメッセージ作成
 	LocalFree(buf);//FormatMessageAでFORMAT_MESSAGE_ALLOCATE_BUFFERを指定したので必ず開放
 	return ret;
 }

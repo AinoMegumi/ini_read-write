@@ -38,6 +38,9 @@ void IniStream::edit(std::wstring const& section, std::wstring const& key, std::
 		throw std::runtime_error("IniStream::edit : " + getLastErrorText());
 	}
 }
+int IniStream::get_int(std::wstring const& section, std::wstring const& key, const int default_num){
+	return GetPrivateProfileInt(section.c_str(), key.c_str(), default_num, this->filefullpath.c_str());
+}
 static inline void clearErr() {
 	SetLastError(NO_ERROR);
 }

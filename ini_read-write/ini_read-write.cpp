@@ -4,6 +4,7 @@
 #include <fstream>
 #pragma comment(lib, "shlwapi.lib")
 #pragma comment(lib, "Kernel32.lib")
+constexpr size_t GetPrivateProfileStringBuf = 1024;
 std::string getLastErrorText();
 static inline void clearErr();
 IniStream::IniStream(std::wstring const& filepath_or_name) {
@@ -40,6 +41,11 @@ void IniStream::edit(std::wstring const& section, std::wstring const& key, std::
 }
 int IniStream::get_int(std::wstring const& section, std::wstring const& key, const int default_num){
 	return GetPrivateProfileInt(section.c_str(), key.c_str(), default_num, this->filefullpath.c_str());
+}
+std::wstring IniStream::get_wstring(std::wstring const& section, std::wstring const& key, std::wstring const& default_str){
+	wchar_t buf[GetPrivateProfileStringBuf];
+	GetPrivateProfileString(section.c_str(), key.c_str(), default_str.c_str(), buf, GetPrivateProfileStringBuf, this->filefullpath.c_str());
+	return buf;
 }
 static inline void clearErr() {
 	SetLastError(NO_ERROR);
